@@ -1,32 +1,27 @@
 #!/usr/bin/python3
-""" a recursive function that queries the Reddit API """
+"""
+2. Recurse it!
+"""
 import requests
 
 
 def recurse(subreddit, hot_list=[], after=None):
-    """ returns list with titles """
+    """ function that queries the Reddit API and returns a list containing
+        the titles of all hot articles for a given subreddit. If no results
+        are found for the given subreddit, the function should return None.
+    """
+    headers = {'User-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0)\
+                AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100\
+                Safari/537.36'}
+    params = {'limit': 100, 'after': after}
     url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    params = {'after': after}
-    response = requests.get(
-                                url,
-                                headers=headers,
-                                params=params,
-                                allow_redirects=False
-                            )
-    if response.status_code == 200:
-        data = response.json().get('data')
-        if data is not None:
-            children = data.get('children')
-            if children is not None:
-                for child in children:
-                    hot_list.append(child.get('data').get('title'))
-                after = data.get('after')
-                if after is not None:
-                    return recurse(subreddit, hot_list, after)
-                else:
-                    return hot_list
-        else:
-            return hot_list
-    else:
+    res = requests.get(url, headers=headers, params=params)
+    if res.status_code == 404:
         return None
+    children = res.json().get('data').get('children')
+    for child in children:
+        hot_list.append(child.get('data').get('title'))
+    after = res.json().get('data').get('after')
+    if after is None:
+        return hot_list
+    return recurse(subreddit, hot_list, after)
