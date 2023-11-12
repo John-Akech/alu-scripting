@@ -2,6 +2,7 @@
 """ a recursive function that queries the Reddit API """
 import requests
 
+
 def recurse(subreddit, hot_list=[], after=None):
     """ returns list with titles """
     url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)

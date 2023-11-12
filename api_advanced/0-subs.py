@@ -2,7 +2,8 @@
 """ a function that queries the Reddit API  """
 import requests
 
- def number_of_subscribers(subreddit):
+
+def number_of_subscribers(subreddit):
     """ number_of_subscribers """
     url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
     headers = {"User-Agent": "Mozilla/5.0"}
